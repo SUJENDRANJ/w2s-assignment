@@ -12,7 +12,7 @@ field index / data ledger rather than a typical admin dashboard.
 - React 19 + Vite
 - Redux Toolkit (async thunks + slices for users/products/UI state)
 - Tailwind CSS v4
-- Plain JavaScript (no TypeScript)
+- JavaScript
 
 ## Features
 - **Two tabs** — Users and Products, switchable via the side index drawer
