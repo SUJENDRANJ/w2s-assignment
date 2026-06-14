@@ -23,11 +23,19 @@ function DataTable({ data }) {
             <tr key={row.id}>
               {columns.map((column) => (
                 <td key={column} className="border p-2">
-                  {Array.isArray(row[column])
-                    ? row[column].join(", ")
-                    : typeof row[column] === "object" && row[column] !== null
-                      ? JSON.stringify(row[column])
-                      : row[column]}
+                  {column == "images" ? (
+                    <img src={row[column][0]} alt="" />
+                  ) : column === "address" ? (
+                    <div>
+                      <div>
+                        {row[column].address},{row[column].city},
+                        {row[column].state},{row[column].postalCode},
+                        {row[column].country}
+                      </div>
+                    </div>
+                  ) : (
+                    row[column]
+                  )}
                 </td>
               ))}
             </tr>

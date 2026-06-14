@@ -10,7 +10,6 @@ const uiSlice = createSlice({
   reducers: {
     toggleTheme: (state) => {
       state.theme = state.theme === "light" ? "dark" : "light";
-      localStorage.setItem("theme", state.theme);
       if (state.theme === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
       } else {
