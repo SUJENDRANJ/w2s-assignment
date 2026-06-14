@@ -1,3 +1,59 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-ink: #0d1117;
+  --color-paper: #f5f1e8;
+  --color-paper-dim: #eae4d6;
+  --color-signal: #ff6b35;
+  --color-moss: #3a7d5c;
+  --color-rust: #c44536;
+  --color-slate: #8b8378;
+
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-serif: "Source Serif 4", Georgia, serif;
+
+  --tracking-widish: 0.08em;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-mono);
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    background-image:
+      linear-gradient(rgba(13, 17, 23, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(13, 17, 23, 0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  [data-theme="dark"] body {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    background-image:
+      linear-gradient(rgba(245, 241, 232, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245, 241, 232, 0.04) 1px, transparent 1px);
+  }
+
+  ::selection {
+    background-color: var(--color-signal);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(139, 131, 120, 0.4);
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}
