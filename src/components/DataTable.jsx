@@ -1,9 +1,9 @@
-function DataTable({ data }) {
+function DataTable({ data, visibleColumns }) {
   if (!data.length) {
     return <p>No data found</p>;
   }
 
-  const columns = Object.keys(data[0]);
+  const columns = visibleColumns;
 
   return (
     <div className="overflow-x-auto">

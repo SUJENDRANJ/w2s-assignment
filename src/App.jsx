@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Tabs from "./components/Tabs";
@@ -9,11 +9,16 @@ import ErrorMessage from "./components/ErrorMessage";
 import { useDataFetcher } from "./hooks/useFetchData";
 import Pagination from "./components/Pagination";
 import { toggleTheme } from "./store/uiSlice";
+import Filter from "./components/Filters";
+import ColumnSelector from "./components/ColumnSelector";
 
 function App() {
   const [activeTab, setActiveTab] = useState("users");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const [hiddenColumns, setHiddenColumns] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -24,13 +29,43 @@ function App() {
 
   const currentState = activeTab === "users" ? usersState : productsState;
 
-  const filteredData = currentState.data.filter((item) =>
+  const categories = [
+    "all",
+    ...new Set(productsState.data.map((product) => product.category)),
+  ];
+
+  let filteredData = currentState.data;
+  filteredData = currentState.data.filter((item) =>
     Object.values(item).some((value) =>
       value.toString().toLowerCase().includes(searchTerm.toLowerCase()),
     ),
   );
 
-  const categories = ["all", ...filteredData];
+  if (activeTab === "products" && selectedCategory !== "all") {
+    filteredData = filteredData.filter(
+      (product) => product.category === selectedCategory,
+    );
+  }
+
+  useEffect(() => {
+    if (currentState.data.length) {
+      setHiddenColumns([]);
+    }
+  }, [activeTab, currentState.data]);
+
+  const allColumns =
+    currentState.data.length > 0 ? Object.keys(currentState.data[0]) : [];
+
+  const toggleColumn = (column) => {
+    setHiddenColumns((prev) =>
+      prev.includes(column)
+        ? prev.filter((c) => c !== column)
+        : [...prev, column],
+    );
+  };
+  const visibleColumns = allColumns.filter(
+    (column) => !hiddenColumns.includes(column),
+  );
 
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -78,7 +113,23 @@ function App() {
             className="mb-4 w-full rounded border p-2"
           />
 
-          <DataTable data={paginatedData} />
+          {activeTab === "products" && (
+            <Filter
+              value={selectedCategory}
+              options={categories}
+              onChange={setSelectedCategory}
+            />
+          )}
+
+          {currentState.data.length > 0 && (
+            <ColumnSelector
+              columns={Object.keys(currentState.data[0])}
+              visibleColumns={visibleColumns}
+              toggleColumn={toggleColumn}
+            />
+          )}
+
+          <DataTable data={paginatedData} visibleColumns={visibleColumns} />
 
           {totalPages > 1 && (
             <Pagination
