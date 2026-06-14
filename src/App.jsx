@@ -3,26 +3,35 @@ import { useSelector } from "react-redux";
 
 import Tabs from "./components/Tabs";
 import DataTable from "./components/DataTable";
+import Loader from "./components/Loader";
+import ErrorMessage from "./components/ErrorMessage";
+
 import { useDataFetcher } from "./hooks/useFetchData";
 
 function App() {
   const [activeTab, setActiveTab] = useState("users");
 
-  const users = useSelector((state) => state.users.data);
+  const usersState = useSelector((state) => state.users);
 
-  const products = useSelector((state) => state.products.data);
+  const productsState = useSelector((state) => state.products);
 
-  useDataFetcher(activeTab, users, products);
+  useDataFetcher(activeTab, usersState.data, productsState.data);
 
-  const currentData = activeTab === "users" ? users : products;
+  const currentState = activeTab === "users" ? usersState : productsState;
 
   return (
-    <div className="mx-auto max-w-7xl p-6">
-      <h1 className="mb-6 text-2xl font-bold">Data Dashboard</h1>
+    <div className="p-5">
+      <h1 className="mb-5 text-2xl font-bold">Dashboard</h1>
 
       <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <DataTable data={currentData} />
+      {currentState.loading ? (
+        <Loader />
+      ) : currentState.error ? (
+        <ErrorMessage message={currentState.error} />
+      ) : (
+        <DataTable data={currentState.data} />
+      )}
     </div>
   );
 }

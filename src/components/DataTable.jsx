@@ -1,54 +1,17 @@
-import { useMemo } from "react";
-
 function DataTable({ data }) {
-  const columns = useMemo(() => {
-    if (!data?.length) return [];
-
-    return Object.keys(data[0]);
-  }, [data]);
-
-  const renderValue = (value) => {
-    if (value === null || value === undefined) {
-      return "-";
-    }
-
-    if (Array.isArray(value)) {
-      return (
-        <pre className="max-w-xs overflow-auto whitespace-pre-wrap text-xs">
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      );
-    }
-
-    if (typeof value === "object") {
-      return (
-        <pre className="max-w-xs overflow-auto whitespace-pre-wrap text-xs">
-          {JSON.stringify(value, null, 2)}
-        </pre>
-      );
-    }
-
-    return String(value);
-  };
-
-  if (!data?.length) {
-    return (
-      <div className="rounded-lg border bg-white p-8 text-center text-gray-500">
-        No data available
-      </div>
-    );
+  if (!data.length) {
+    return <p>No data found</p>;
   }
 
+  const columns = Object.keys(data[0]);
+
   return (
-    <div className="overflow-x-auto rounded-lg border bg-white shadow-sm">
-      <table className="min-w-full border-collapse">
-        <thead className="sticky top-0 bg-gray-100">
+    <div className="overflow-x-auto">
+      <table className="w-full border border-gray-300">
+        <thead>
           <tr>
             {columns.map((column) => (
-              <th
-                key={column}
-                className="border-b px-4 py-3 text-left text-sm font-semibold capitalize text-gray-700"
-              >
+              <th key={column} className="border p-2 bg-gray-100 text-left">
                 {column}
               </th>
             ))}
@@ -56,14 +19,15 @@ function DataTable({ data }) {
         </thead>
 
         <tbody>
-          {data.map((row, rowIndex) => (
-            <tr key={row.id ?? rowIndex} className="hover:bg-gray-50">
+          {data.map((row) => (
+            <tr key={row.id}>
               {columns.map((column) => (
-                <td
-                  key={column}
-                  className="border-b px-4 py-3 align-top text-sm"
-                >
-                  {renderValue(row[column])}
+                <td key={column} className="border p-2">
+                  {Array.isArray(row[column])
+                    ? row[column].join(", ")
+                    : typeof row[column] === "object" && row[column] !== null
+                      ? JSON.stringify(row[column])
+                      : row[column]}
                 </td>
               ))}
             </tr>
