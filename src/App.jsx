@@ -1,20 +1,28 @@
-import { useDispatch } from "react-redux";
-import "./App.css";
-import { toggleTheme } from "./store/uiSlice";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
+import Tabs from "./components/Tabs";
+import DataTable from "./components/DataTable";
+import { useDataFetcher } from "./hooks/useFetchData";
 
 function App() {
-  const dispatch = useDispatch();
-  return (
-    <div>
-      <div className="dark text-3xl dark:bg-black dark:text-white">hello</div>
+  const [activeTab, setActiveTab] = useState("users");
 
-      <button
-        onClick={() => {
-          dispatch(toggleTheme());
-        }}
-      >
-        Click
-      </button>
+  const users = useSelector((state) => state.users.data);
+
+  const products = useSelector((state) => state.products.data);
+
+  useDataFetcher(activeTab, users, products);
+
+  const currentData = activeTab === "users" ? users : products;
+
+  return (
+    <div className="mx-auto max-w-7xl p-6">
+      <h1 className="mb-6 text-2xl font-bold">Data Dashboard</h1>
+
+      <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+      <DataTable data={currentData} />
     </div>
   );
 }
